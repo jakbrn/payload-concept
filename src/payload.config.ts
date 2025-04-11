@@ -14,18 +14,19 @@ import { Reports } from './collections/Reports'
 import { Workstations } from './collections/Workstations'
 import { Positions } from './collections/Positions'
 import { ReportTypes } from './collections/ReportTypes'
+import { Administrators } from './collections/Administrators'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
   admin: {
-    user: Users.slug,
+    user: Administrators.slug,
     importMap: {
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Companies, Positions, Workstations, Workers, ReportTypes, Reports],
+  collections: [Administrators, Users, Companies, Positions, Workstations, Workers, ReportTypes, Reports],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
