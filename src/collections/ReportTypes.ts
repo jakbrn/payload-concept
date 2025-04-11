@@ -1,9 +1,17 @@
+import { isCompanyAdmin } from '@/access/isCompanyAdmin'
+import { isCompanyMember } from '@/access/isCompanyMember'
 import type { CollectionConfig } from 'payload'
 
 export const ReportTypes: CollectionConfig = {
   slug: 'report-types',
   admin: {
     useAsTitle: 'name',
+  },
+  access: {
+    read: isCompanyMember,
+    create: isCompanyAdmin,
+    update: isCompanyAdmin,
+    delete: isCompanyAdmin,
   },
   fields: [
     {

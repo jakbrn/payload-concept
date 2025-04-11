@@ -1,3 +1,5 @@
+import { isCompanyAdmin } from '@/access/isCompanyAdmin'
+import { isCompanyMember } from '@/access/isCompanyMember'
 import type { CollectionConfig } from 'payload'
 
 export const Users: CollectionConfig = {
@@ -7,6 +9,12 @@ export const Users: CollectionConfig = {
   },
   auth: {
     loginWithUsername: true,
+  },
+  access: {
+    read: isCompanyAdmin, // TODO check if user can check self data
+    create: isCompanyAdmin,
+    update: isCompanyAdmin,
+    delete: isCompanyAdmin,
   },
   fields: [
     {

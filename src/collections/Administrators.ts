@@ -1,3 +1,4 @@
+import { isAdmin } from '@/access/isAdmin'
 import type { CollectionConfig } from 'payload'
 
 export const Administrators: CollectionConfig = {
@@ -6,5 +7,11 @@ export const Administrators: CollectionConfig = {
     useAsTitle: 'email',
   },
   auth: true,
+  access: {
+    read: isAdmin,
+    create: isAdmin,
+    update: isAdmin,
+    delete: isAdmin,
+  },
   fields: [],
 }

@@ -1,9 +1,18 @@
+import { isAdmin } from '@/access/isAdmin'
+import { isCompanyAdmin } from '@/access/isCompanyAdmin'
+import { isCompanyMember } from '@/access/isCompanyMember'
 import type { CollectionConfig } from 'payload'
 
 export const Companies: CollectionConfig = {
   slug: 'companies',
   admin: {
     useAsTitle: 'name',
+  },
+  access: {
+    read: isCompanyMember,
+    create: isAdmin,
+    update: isCompanyAdmin,
+    delete: isAdmin,
   },
   fields: [
     {

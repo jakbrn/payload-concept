@@ -1,7 +1,15 @@
+import { isCompanyAdmin } from '@/access/isCompanyAdmin'
+import { isCompanyMember } from '@/access/isCompanyMember'
 import type { CollectionConfig } from 'payload'
 
 export const Reports: CollectionConfig = {
   slug: 'reports',
+  access: {
+    read: isCompanyMember,
+    create: isCompanyMember, // TODO: check if user are sender
+    update: isCompanyMember, // TODO: check if user are reciver
+    delete: isCompanyAdmin,
+  },
   fields: [
     {
       name: 'type',
