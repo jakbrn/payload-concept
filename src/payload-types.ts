@@ -184,6 +184,8 @@ export interface Company {
 export interface Worker {
   id: string;
   name: string;
+  role: 'admin' | 'user';
+  sender?: boolean | null;
   company: string | Company;
   position: string | Position;
   updatedAt: string;
@@ -371,6 +373,8 @@ export interface WorkstationsSelect<T extends boolean = true> {
  */
 export interface WorkersSelect<T extends boolean = true> {
   name?: T;
+  role?: T;
+  sender?: T;
   company?: T;
   position?: T;
   updatedAt?: T;

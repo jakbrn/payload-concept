@@ -9,6 +9,13 @@ export const Reports: CollectionConfig = {
       relationTo: 'report-types',
       hasMany: false,
       required: true,
+      filterOptions: ({ data }) => {
+        return {
+          company: {
+            equals: data.company,
+          },
+        }
+      },
     },
     {
       name: 'comment',
@@ -27,6 +34,13 @@ export const Reports: CollectionConfig = {
       relationTo: 'workstations',
       hasMany: false,
       required: true,
+      filterOptions: ({ data }) => {
+        return {
+          company: {
+            equals: data.company,
+          },
+        }
+      },
     },
     {
       name: 'worker',
@@ -34,6 +48,13 @@ export const Reports: CollectionConfig = {
       relationTo: 'workers',
       hasMany: false,
       required: true,
+      filterOptions: ({ data }) => {
+        return {
+          company: {
+            equals: data.company,
+          },
+        }
+      },
     },
     {
       name: 'targetPosition',
@@ -41,6 +62,13 @@ export const Reports: CollectionConfig = {
       relationTo: 'positions',
       hasMany: false,
       required: true,
+      filterOptions: ({ data }) => {
+        return {
+          company: {
+            equals: data.company,
+          },
+        }
+      },
     },
     {
       name: 'completedAt',

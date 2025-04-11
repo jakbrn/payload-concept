@@ -29,6 +29,13 @@ export const ReportTypes: CollectionConfig = {
       type: 'relationship',
       relationTo: 'positions',
       required: true,
+      filterOptions: ({ data }) => {
+        return {
+          company: {
+            equals: data.company,
+          },
+        }
+      },
     },
   ],
 }

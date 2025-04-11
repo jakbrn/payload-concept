@@ -46,6 +46,13 @@ export const Workers: CollectionConfig = {
       relationTo: 'positions',
       hasMany: false,
       required: true,
+      filterOptions: ({ data }) => {
+        return {
+          company: {
+            equals: data.company,
+          },
+        }
+      },
     },
   ],
 }
