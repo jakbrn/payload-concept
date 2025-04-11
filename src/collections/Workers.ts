@@ -12,6 +12,28 @@ export const Workers: CollectionConfig = {
       required: true,
     },
     {
+      name: 'role',
+      type: 'select',
+      options: [
+        {
+          label: 'Admin',
+          value: 'admin',
+        },
+        {
+          label: 'User',
+          value: 'user',
+        },
+      ],
+      required: true,
+      defaultValue: 'user',
+    },
+    {
+      name: 'sender',
+      type: 'checkbox',
+      label: 'Is this worker a sender?',
+      defaultValue: false,
+    },
+    {
       name: 'company',
       type: 'relationship',
       relationTo: 'companies',

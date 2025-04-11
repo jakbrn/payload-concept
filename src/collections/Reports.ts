@@ -43,7 +43,7 @@ export const Reports: CollectionConfig = {
       required: true,
     },
     {
-      name: 'closedAt',
+      name: 'completedAt',
       type: 'date',
     },
   ],

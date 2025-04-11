@@ -236,7 +236,7 @@ export interface Report {
   workstation: string | Workstation;
   worker: string | Worker;
   targetPosition: string | Position;
-  closedAt?: string | null;
+  completedAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -399,7 +399,7 @@ export interface ReportsSelect<T extends boolean = true> {
   workstation?: T;
   worker?: T;
   targetPosition?: T;
-  closedAt?: T;
+  completedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }
