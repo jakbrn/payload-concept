@@ -12,9 +12,9 @@ export const Companies: CollectionConfig = {
       required: true,
     },
     {
-      name: 'workers',
+      name: 'users',
       type: 'join',
-      collection: 'workers',
+      collection: 'users',
       on: 'company',
     },
     {

@@ -9,7 +9,6 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Companies } from './collections/Companies'
-import { Workers } from './collections/Workers'
 import { Reports } from './collections/Reports'
 import { Workstations } from './collections/Workstations'
 import { Positions } from './collections/Positions'
@@ -26,7 +25,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Administrators, Users, Companies, Positions, Workstations, Workers, ReportTypes, Reports],
+  collections: [Administrators, Users, Companies, Positions, Workstations, ReportTypes, Reports],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

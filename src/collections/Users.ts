@@ -3,11 +3,54 @@ import type { CollectionConfig } from 'payload'
 export const Users: CollectionConfig = {
   slug: 'users',
   admin: {
-    useAsTitle: 'email',
+    useAsTitle: 'username',
   },
-  auth: true,
+  auth: {
+    loginWithUsername: true,
+  },
   fields: [
-    // Email added by default
-    // Add more fields as needed
+    {
+      name: 'role',
+      type: 'select',
+      options: [
+        {
+          label: 'Admin',
+          value: 'admin',
+        },
+        {
+          label: 'User',
+          value: 'user',
+        },
+      ],
+      required: true,
+      defaultValue: 'user',
+    },
+    {
+      name: 'sender',
+      type: 'checkbox',
+      label: 'Is this worker a sender?',
+      defaultValue: false,
+    },
+    {
+      name: 'company',
+      type: 'relationship',
+      relationTo: 'companies',
+      hasMany: false,
+      required: true,
+    },
+    {
+      name: 'position',
+      type: 'relationship',
+      relationTo: 'positions',
+      hasMany: false,
+      required: true,
+      filterOptions: ({ data }) => {
+        return {
+          company: {
+            equals: data.company,
+          },
+        }
+      },
+    },
   ],
 }

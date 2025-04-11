@@ -63,15 +63,16 @@ export type SupportedTimezones =
 
 export interface Config {
   auth: {
+    administrators: AdministratorAuthOperations;
     users: UserAuthOperations;
   };
   blocks: {};
   collections: {
+    administrators: Administrator;
     users: User;
     companies: Company;
     positions: Position;
     workstations: Workstation;
-    workers: Worker;
     'report-types': ReportType;
     reports: Report;
     'payload-locked-documents': PayloadLockedDocument;
@@ -80,18 +81,18 @@ export interface Config {
   };
   collectionsJoins: {
     companies: {
-      workers: 'workers';
+      users: 'users';
       workstations: 'workstations';
       positions: 'positions';
       reportTypes: 'report-types';
     };
   };
   collectionsSelect: {
+    administrators: AdministratorsSelect<false> | AdministratorsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     companies: CompaniesSelect<false> | CompaniesSelect<true>;
     positions: PositionsSelect<false> | PositionsSelect<true>;
     workstations: WorkstationsSelect<false> | WorkstationsSelect<true>;
-    workers: WorkersSelect<false> | WorkersSelect<true>;
     'report-types': ReportTypesSelect<false> | ReportTypesSelect<true>;
     reports: ReportsSelect<false> | ReportsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -104,15 +105,19 @@ export interface Config {
   globals: {};
   globalsSelect: {};
   locale: null;
-  user: User & {
-    collection: 'users';
-  };
+  user:
+    | (Administrator & {
+        collection: 'administrators';
+      })
+    | (User & {
+        collection: 'users';
+      });
   jobs: {
     tasks: unknown;
     workflows: unknown;
   };
 }
-export interface UserAuthOperations {
+export interface AdministratorAuthOperations {
   forgotPassword: {
     email: string;
     password: string;
@@ -130,15 +135,53 @@ export interface UserAuthOperations {
     password: string;
   };
 }
+export interface UserAuthOperations {
+  forgotPassword: {
+    username: string;
+  };
+  login: {
+    password: string;
+    username: string;
+  };
+  registerFirstUser: {
+    password: string;
+    username: string;
+  };
+  unlock: {
+    username: string;
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "administrators".
+ */
+export interface Administrator {
+  id: string;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  password?: string | null;
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
   id: string;
+  role: 'admin' | 'user';
+  sender?: boolean | null;
+  company: string | Company;
+  position: string | Position;
   updatedAt: string;
   createdAt: string;
-  email: string;
+  email?: string | null;
+  username: string;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
   salt?: string | null;
@@ -154,8 +197,8 @@ export interface User {
 export interface Company {
   id: string;
   name: string;
-  workers?: {
-    docs?: (string | Worker)[];
+  users?: {
+    docs?: (string | User)[];
     hasNextPage?: boolean;
     totalDocs?: number;
   };
@@ -179,15 +222,12 @@ export interface Company {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "workers".
+ * via the `definition` "workstations".
  */
-export interface Worker {
+export interface Workstation {
   id: string;
   name: string;
-  role: 'admin' | 'user';
-  sender?: boolean | null;
   company: string | Company;
-  position: string | Position;
   updatedAt: string;
   createdAt: string;
 }
@@ -196,17 +236,6 @@ export interface Worker {
  * via the `definition` "positions".
  */
 export interface Position {
-  id: string;
-  name: string;
-  company: string | Company;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "workstations".
- */
-export interface Workstation {
   id: string;
   name: string;
   company: string | Company;
@@ -236,7 +265,7 @@ export interface Report {
   comment?: string | null;
   company: string | Company;
   workstation: string | Workstation;
-  worker: string | Worker;
+  user: string | User;
   targetPosition: string | Position;
   completedAt?: string | null;
   updatedAt: string;
@@ -249,6 +278,10 @@ export interface Report {
 export interface PayloadLockedDocument {
   id: string;
   document?:
+    | ({
+        relationTo: 'administrators';
+        value: string | Administrator;
+      } | null)
     | ({
         relationTo: 'users';
         value: string | User;
@@ -266,10 +299,6 @@ export interface PayloadLockedDocument {
         value: string | Workstation;
       } | null)
     | ({
-        relationTo: 'workers';
-        value: string | Worker;
-      } | null)
-    | ({
         relationTo: 'report-types';
         value: string | ReportType;
       } | null)
@@ -278,10 +307,15 @@ export interface PayloadLockedDocument {
         value: string | Report;
       } | null);
   globalSlug?: string | null;
-  user: {
-    relationTo: 'users';
-    value: string | User;
-  };
+  user:
+    | {
+        relationTo: 'administrators';
+        value: string | Administrator;
+      }
+    | {
+        relationTo: 'users';
+        value: string | User;
+      };
   updatedAt: string;
   createdAt: string;
 }
@@ -291,10 +325,15 @@ export interface PayloadLockedDocument {
  */
 export interface PayloadPreference {
   id: string;
-  user: {
-    relationTo: 'users';
-    value: string | User;
-  };
+  user:
+    | {
+        relationTo: 'administrators';
+        value: string | Administrator;
+      }
+    | {
+        relationTo: 'users';
+        value: string | User;
+      };
   key?: string | null;
   value?:
     | {
@@ -321,12 +360,32 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users_select".
+ * via the `definition` "administrators_select".
  */
-export interface UsersSelect<T extends boolean = true> {
+export interface AdministratorsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users_select".
+ */
+export interface UsersSelect<T extends boolean = true> {
+  role?: T;
+  sender?: T;
+  company?: T;
+  position?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  username?: T;
   resetPasswordToken?: T;
   resetPasswordExpiration?: T;
   salt?: T;
@@ -340,7 +399,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface CompaniesSelect<T extends boolean = true> {
   name?: T;
-  workers?: T;
+  users?: T;
   workstations?: T;
   positions?: T;
   reportTypes?: T;
@@ -369,19 +428,6 @@ export interface WorkstationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "workers_select".
- */
-export interface WorkersSelect<T extends boolean = true> {
-  name?: T;
-  role?: T;
-  sender?: T;
-  company?: T;
-  position?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "report-types_select".
  */
 export interface ReportTypesSelect<T extends boolean = true> {
@@ -401,7 +447,7 @@ export interface ReportsSelect<T extends boolean = true> {
   comment?: T;
   company?: T;
   workstation?: T;
-  worker?: T;
+  user?: T;
   targetPosition?: T;
   completedAt?: T;
   updatedAt?: T;

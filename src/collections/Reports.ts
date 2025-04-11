@@ -43,9 +43,9 @@ export const Reports: CollectionConfig = {
       },
     },
     {
-      name: 'worker',
+      name: 'user',
       type: 'relationship',
-      relationTo: 'workers',
+      relationTo: 'users',
       hasMany: false,
       required: true,
       filterOptions: ({ data }) => {
